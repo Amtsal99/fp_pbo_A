@@ -84,11 +84,11 @@ public class CryptarithmGame extends JFrame {
     private void handleSubmit() {
         timer.cancel();
 
-        String playerAnswer;
-        try {
-            playerAnswer = answerInput.getText().trim();
-        } catch (NumberFormatException e) {
-            playerAnswer = "";
+        String playerAnswer = answerInput.getText().trim();
+
+        if (playerAnswer.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter an answer before submitting!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         gameLogic.calculateScore(isPlayer1Turn, playerAnswer);

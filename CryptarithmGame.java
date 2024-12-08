@@ -18,15 +18,15 @@ public class CryptarithmGame extends JFrame {
 
     private JLabel questionLabel, timerLabel, player1ScoreLabel, player2ScoreLabel;
     private JTextField answerInput;
-    private JButton submitButton;
+    private JButton submitButton, hintButton;
     private Timer timer;
     private int timeLeft = 120;
 
     public CryptarithmGame() {
         setTitle("Cryptarithm Game");
-        setSize(400, 300);
+        setSize(400, 350);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new GridLayout(6, 1));
+        setLayout(new GridLayout(7, 1));
 
         questionLabel = new JLabel("Question: ", SwingConstants.CENTER);
         timerLabel = new JLabel("Time Left: 120s", SwingConstants.CENTER);
@@ -34,11 +34,13 @@ public class CryptarithmGame extends JFrame {
         player2ScoreLabel = new JLabel("Player 2 Score: 0", SwingConstants.CENTER);
         answerInput = new JTextField();
         submitButton = new JButton("Submit Answer");
+        hintButton = new JButton("Get Hint");
 
         add(questionLabel);
         add(timerLabel);
         add(answerInput);
         add(submitButton);
+        add(hintButton);
         add(player1ScoreLabel);
         add(player2ScoreLabel);
 
@@ -48,6 +50,13 @@ public class CryptarithmGame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSubmit();
+            }
+        });
+
+        hintButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleHint();
             }
         });
     }
@@ -109,6 +118,22 @@ public class CryptarithmGame extends JFrame {
         }
     }
 
+    private void handleHint() {
+        String revealedQuestion = gameLogic.revealHint();
+        if (revealedQuestion == null) {
+            JOptionPane.showMessageDialog(this, "No more hints available!");
+        } else {
+            questionLabel.setText("Question: " + revealedQuestion);
+            if (isPlayer1Turn) {
+                gameLogic.deductPoints(true, 5);
+                player1ScoreLabel.setText("Player 1 Score: " + gameLogic.getPlayer1Score());
+            } else {
+                gameLogic.deductPoints(false, 5);
+                player2ScoreLabel.setText("Player 2 Score: " + gameLogic.getPlayer2Score());
+            }
+        }
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             CryptarithmGame game = new CryptarithmGame();

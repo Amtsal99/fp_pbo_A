@@ -62,6 +62,26 @@ public class GameLogic {
         this.startTime = System.currentTimeMillis();
     }
 
+    public String revealHint() {
+        for (int i = 0; i < digitToCharMap.length; i++) {
+            char encryptedChar = digitToCharMap[i];
+            if (encryptedChar != '\0' && question.contains(String.valueOf(encryptedChar))) {
+                question = question.replace(encryptedChar, (char) ('0' + i));
+                digitToCharMap[i] = '\0';
+                return question;
+            }
+        }
+        return null;
+    }
+    
+    public void deductPoints(boolean isPlayer1, int points) {
+        if (isPlayer1) {
+            player1Score -= points;
+        } else {
+            player2Score -= points;
+        }
+    }
+
     public int calculateScore(boolean isPlayer1, String playerAnswer) {
         long timeTaken = (System.currentTimeMillis() - startTime) / 1000;
         int remainingTime = TIMER_SECONDS - (int) timeTaken;

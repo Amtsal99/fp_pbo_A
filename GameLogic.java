@@ -9,6 +9,12 @@ public class GameLogic {
     private String question;
     private String answer;
 
+    private char[] digitToCharMap = new char[10];
+
+    public GameLogic() {
+        generateRandomMapping();
+    }
+
     private long startTime;
 
     public void generateQuestion() {
@@ -29,10 +35,25 @@ public class GameLogic {
         System.out.println("Actual numbers: " + num1 + (isAddition ? " + " : " - ") + num2 + " = " + num3);
     }
 
+    private void generateRandomMapping() {
+        Random random = new Random();
+        char[] availableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
+        for (int i = 0; i < 10; i++) {
+            int randomIndex = random.nextInt(availableChars.length - i) + i;
+
+            char temp = availableChars[i];
+            availableChars[i] = availableChars[randomIndex];
+            availableChars[randomIndex] = temp;
+
+            digitToCharMap[i] = availableChars[i];
+        }
+    }
+
     private String encryptNumber(int number) {
         StringBuilder encrypted = new StringBuilder();
         for (char digit : String.valueOf(number).toCharArray()) {
-            encrypted.append((char) ('A' + (digit - '0')));
+            encrypted.append(digitToCharMap[digit - '0']);
         }
         return encrypted.toString();
     }

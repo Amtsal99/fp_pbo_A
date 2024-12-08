@@ -18,7 +18,7 @@ public class CryptarithmGame extends JFrame {
 
     private JLabel questionLabel, timerLabel, player1ScoreLabel, player2ScoreLabel;
     private JTextField answerInput;
-    private JButton submitButton, hintButton;
+    private JButton submitButton, hintButton, endGameButton;
     private Timer timer;
     private int timeLeft = 120;
 
@@ -26,7 +26,7 @@ public class CryptarithmGame extends JFrame {
         setTitle("Cryptarithm Game");
         setSize(400, 350);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new GridLayout(7, 1));
+        setLayout(new GridLayout(9, 1));
 
         questionLabel = new JLabel("Question: ", SwingConstants.CENTER);
         timerLabel = new JLabel("Time Left: 120s", SwingConstants.CENTER);
@@ -35,12 +35,14 @@ public class CryptarithmGame extends JFrame {
         answerInput = new JTextField();
         submitButton = new JButton("Submit Answer");
         hintButton = new JButton("Get Hint");
+        endGameButton = new JButton("End Game");
 
         add(questionLabel);
         add(timerLabel);
         add(answerInput);
         add(submitButton);
         add(hintButton);
+        add(endGameButton);
         add(player1ScoreLabel);
         add(player2ScoreLabel);
 
@@ -57,6 +59,13 @@ public class CryptarithmGame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleHint();
+            }
+        });
+
+        endGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleEndGame();
             }
         });
     }
@@ -132,6 +141,24 @@ public class CryptarithmGame extends JFrame {
                 player2ScoreLabel.setText("Player 2 Score: " + gameLogic.getPlayer2Score());
             }
         }
+    }
+
+    private void handleEndGame() {
+        timer.cancel();
+        int player1Score = gameLogic.getPlayer1Score();
+        int player2Score = gameLogic.getPlayer2Score();
+    
+        String winnerMessage;
+        if (player1Score > player2Score) {
+            winnerMessage = "Player 1 wins with " + player1Score + " points!";
+        } else if (player2Score > player1Score) {
+            winnerMessage = "Player 2 wins with " + player2Score + " points!";
+        } else {
+            winnerMessage = "It's a tie! Both players have " + player1Score + " points.";
+        }
+    
+        JOptionPane.showMessageDialog(this, winnerMessage, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
     }
     
     public static void main(String[] args) {

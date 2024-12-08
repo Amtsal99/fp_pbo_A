@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 
 public class CryptarithmGame extends JFrame {
     private GameLogic gameLogic = new GameLogic();
+    private Helper helperFunc = new Helper();
     private boolean isPlayer1Turn = true;
 
     private JLabel questionLabel, timerLabel, player1ScoreLabel, player2ScoreLabel;
@@ -128,7 +129,7 @@ public class CryptarithmGame extends JFrame {
     }
 
     private void handleHint() {
-        String revealedQuestion = gameLogic.revealHint();
+        String revealedQuestion = helperFunc.revealHint(gameLogic.getDigitToCharMap(), gameLogic.getQuestion());
         if (revealedQuestion == null) {
             JOptionPane.showMessageDialog(this, "No more hints available!");
         } else {

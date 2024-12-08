@@ -1,6 +1,9 @@
 import java.util.Random;
 
 public class GameLogic {
+
+    private Helper helperFunc = new Helper();
+
     private static final int MAX_DIGITS = 4;
     private static final int TIMER_SECONDS = 120;
 
@@ -8,11 +11,16 @@ public class GameLogic {
     private int player2Score = 0;
     private String question;
     private String answer;
+    private boolean operator;
 
     private char[] digitToCharMap = new char[10];
 
     public GameLogic() {
-        generateRandomMapping();
+        this.digitToCharMap = helperFunc.generateRandomMapping();
+    }
+
+    public char[] getDigitToCharMap() {
+        return this.digitToCharMap;
     }
 
     private long startTime;
@@ -24,55 +32,23 @@ public class GameLogic {
         boolean isAddition = random.nextBoolean();
         
         int num3 = isAddition ? (num1 + num2) : (num1 - num2);
-        String operator = isAddition ? " + " : " - ";
+        String oper = isAddition ? " + " : " - ";
         this.answer = Integer.toString(num1) + operator + Integer.toString(num2) + " = " + Integer.toString(num3);
+        this.operator = isAddition;
 
-        String encryptedNum1 = encryptNumber(num1);
-        String encryptedNum2 = encryptNumber(num2);
-        String encryptedNum3 = encryptNumber(num3);
-        this.question = encryptedNum1 + (isAddition ? " + " : " - ") + encryptedNum2 + " = " + encryptedNum3;
+        String encryptedNum1 = helperFunc.encryptNumber(num1, this.digitToCharMap);
+        String encryptedNum2 = helperFunc.encryptNumber(num2, this.digitToCharMap);
+        String encryptedNum3 = helperFunc.encryptNumber(num3, this.digitToCharMap);
+
+        this.question = encryptedNum1 + oper + encryptedNum2 + " = " + encryptedNum3;
         System.out.println("Question: " + question);
-        System.out.println("Actual numbers: " + num1 + (isAddition ? " + " : " - ") + num2 + " = " + num3);
-    }
-
-    private void generateRandomMapping() {
-        Random random = new Random();
-        char[] availableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-
-        for (int i = 0; i < 10; i++) {
-            int randomIndex = random.nextInt(availableChars.length - i) + i;
-
-            char temp = availableChars[i];
-            availableChars[i] = availableChars[randomIndex];
-            availableChars[randomIndex] = temp;
-
-            digitToCharMap[i] = availableChars[i];
-        }
-    }
-
-    private String encryptNumber(int number) {
-        StringBuilder encrypted = new StringBuilder();
-        for (char digit : String.valueOf(number).toCharArray()) {
-            encrypted.append(digitToCharMap[digit - '0']);
-        }
-        return encrypted.toString();
+        System.out.println("Actual numbers: " + num1 + oper + num2 + " = " + num3);
     }
 
     public void startTurn() {
         this.startTime = System.currentTimeMillis();
     }
 
-    public String revealHint() {
-        for (int i = 0; i < digitToCharMap.length; i++) {
-            char encryptedChar = digitToCharMap[i];
-            if (encryptedChar != '\0' && question.contains(String.valueOf(encryptedChar))) {
-                question = question.replace(encryptedChar, (char) ('0' + i));
-                digitToCharMap[i] = '\0';
-                return question;
-            }
-        }
-        return null;
-    }
     
     public void deductPoints(boolean isPlayer1, int points) {
         if (isPlayer1) {
@@ -88,15 +64,8 @@ public class GameLogic {
 
         int scoreChange;
         System.out.println("Player answer: " + playerAnswer);
-        System.out.println("Actual answer: " + answer);
 
-        if (answer.equals(playerAnswer)) {
-            scoreChange = Math.max(5, remainingTime / 10);
-        } else if (playerAnswer.isEmpty()) {
-            scoreChange = -4;
-        } else {
-            scoreChange = -Math.max(5, (int) timeTaken / 10);
-        }
+        scoreChange = validateAnswer(isPlayer1, playerAnswer, timeTaken, remainingTime);
 
         if (isPlayer1) {
             player1Score += scoreChange;
@@ -121,5 +90,40 @@ public class GameLogic {
 
     public boolean checkWin() {
         return player1Score >= 40 || player2Score >= 40;
+    }
+
+    //fungsi buat validasi jawaban player
+    private int validateAnswer(boolean isPlayer1, String playerAnswer, long timeTaken, int remainingTime) {
+        String[] playerAnswerParsed = new String[3]; 
+        String[] questionParsed = new String[3];
+
+        playerAnswerParsed = helperFunc.parseNumbersToDigits(playerAnswer);
+        questionParsed = helperFunc.parseNumbersToDigits(this.question);
+
+        //kalo jawaban player sesuai length string question
+        if (!helperFunc.sameLength(questionParsed, playerAnswerParsed)) {
+            System.out.println("Invalid answer length");
+            return -Math.max(5,remainingTime / 10);
+        }
+
+        //kalo jawaban player konsisten di setiap digit
+        else if (!helperFunc.isConsistent(questionParsed, playerAnswerParsed)){
+            System.out.println("Inconsistent answer");
+            return -Math.max(5,remainingTime / 10);
+        }
+
+        //kalo jawaban player ada assign digit leading zero
+        else if (helperFunc.isZeroLeading(playerAnswerParsed)){
+            System.out.println("Zero leading");
+            return -Math.max(5,remainingTime / 10);
+        }
+
+        else if(!helperFunc.isCorrect(playerAnswerParsed, this.operator)){
+            System.out.println("Incorrect answer");
+            return -Math.max(5,remainingTime / 10);
+        }
+        
+        //valid dan benar
+        return Math.max(5, remainingTime / 10);
     }
 }

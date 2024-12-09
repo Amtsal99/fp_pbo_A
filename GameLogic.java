@@ -19,6 +19,10 @@ public class GameLogic {
         this.digitToCharMap = helperFunc.generateRandomMapping();
     }
 
+    public String getOperator() {
+        return (operator ? " + " : " - ");
+    }
+
     public char[] getDigitToCharMap() {
         return this.digitToCharMap;
     }

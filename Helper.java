@@ -80,8 +80,6 @@ public class Helper {
             char temp = availableChars[i];
             availableChars[i] = availableChars[randomIndex];
             availableChars[randomIndex] = temp;
-
-            // digitToCharMap[i] = availableChars[i];
         }
         return availableChars;
     }

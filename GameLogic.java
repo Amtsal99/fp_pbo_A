@@ -33,8 +33,12 @@ public class GameLogic {
         Random random = new Random();
         int num1 = random.nextInt((int) Math.pow(10, MAX_DIGITS));
         int num2 = random.nextInt((int) Math.pow(10, MAX_DIGITS));
-        boolean isAddition = random.nextBoolean();
-        
+        boolean isAddition = random.nextBoolean();        
+        if (!isAddition && num1 < num2) {
+            int temp = num1;
+            num1 = num2;
+            num2 = temp;
+        }
         int num3 = isAddition ? (num1 + num2) : (num1 - num2);
         String oper = isAddition ? " + " : " - ";
         this.answer = Integer.toString(num1) + operator + Integer.toString(num2) + " = " + Integer.toString(num3);
@@ -52,7 +56,6 @@ public class GameLogic {
     public void startTurn() {
         this.startTime = System.currentTimeMillis();
     }
-
     
     public void deductPoints(boolean isPlayer1, int points) {
         if (isPlayer1) {

@@ -246,7 +246,7 @@ public class CryptarithmGame extends JFrame {
                         timerLabel.setText("Time Left: " + timeLeft + "s");
                         timeLeft--;
                     } else {
-                        timer.cancel();
+                        timerLabel.setText("Time Left: " + timeLeft + "s");
                         handleSubmit();
                     }
                 });
@@ -262,12 +262,17 @@ public class CryptarithmGame extends JFrame {
         String playerAnswer1 = answerInput1.getText().trim();
         String playerAnswer2 = answerInput2.getText().trim();
         String playerAnswer3 = answerInput3.getText().trim();
-        String playerAnswer = playerAnswer1 + gameLogic.getOperator()  + playerAnswer2 + " = " + playerAnswer3;
 
-        if (playerAnswer.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter an answer before submitting!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        String playerAnswer;
+
+        if (playerAnswer1.isEmpty() || playerAnswer2.isEmpty() || playerAnswer3.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all answer fields before submitting!", "Error", JOptionPane.ERROR_MESSAGE);
+            playerAnswer = "";
         }
+        else {
+            playerAnswer =  playerAnswer1 + gameLogic.getOperator()  + playerAnswer2 + " = " + playerAnswer3;
+        }
+
 
         gameLogic.calculateScore(isPlayer1Turn, playerAnswer);
 

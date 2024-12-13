@@ -98,6 +98,11 @@ public class GameLogic {
 
     //fungsi buat validasi jawaban player
     private int validateAnswer(boolean isPlayer1, String playerAnswer, long timeTaken, int remainingTime) {
+        if (playerAnswer.isEmpty()){
+            System.out.println("Empty answer");
+            return -Math.max(5,remainingTime / 10);
+        }
+
         String[] playerAnswerParsed = new String[3]; 
         String[] questionParsed = new String[3];
 
@@ -105,6 +110,7 @@ public class GameLogic {
         questionParsed = helperFunc.parseNumbersToDigits(this.question);
 
         //kalo jawaban player sesuai length string question
+
         if (!helperFunc.sameLength(questionParsed, playerAnswerParsed)) {
             System.out.println("Invalid answer length");
             return -Math.max(5,remainingTime / 10);

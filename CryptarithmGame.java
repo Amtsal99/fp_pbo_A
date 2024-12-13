@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Pattern;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,8 +15,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class CryptarithmGame extends JFrame {
     ImageIcon appIcon;
@@ -61,7 +64,7 @@ public class CryptarithmGame extends JFrame {
         
         questionLabel.setVerticalAlignment(JLabel.CENTER);
         questionLabel.setHorizontalAlignment(JLabel.CENTER);
-        questionLabel.setFont(new Font("MV Boli", Font.PLAIN, 25));
+        questionLabel.setFont(new Font("Inter", Font.PLAIN, 25));
         questionPanel.add(questionLabel, BorderLayout.CENTER);
         
         timerLabel.setVerticalAlignment(JLabel.TOP);
@@ -84,9 +87,9 @@ public class CryptarithmGame extends JFrame {
         answerInputPanel2.setBackground(new Color(185, 202, 161));
         answerInputPanel3.setBackground(new Color(163, 184, 161));
 
-        valueFor1.setFont(new Font("MV Boli", Font.PLAIN, 25));
-        valueFor2.setFont(new Font("MV Boli", Font.PLAIN, 25));
-        valueFor3.setFont(new Font("MV Boli", Font.PLAIN, 25));
+        valueFor1.setFont(new Font("Inter", Font.PLAIN, 25));
+        valueFor2.setFont(new Font("Inter", Font.PLAIN, 25));
+        valueFor3.setFont(new Font("Inter", Font.PLAIN, 25));
         
         valueFor1.setBounds(30, 0, 300, 70);
         valueFor2.setBounds(30, 0, 300, 70);
@@ -98,6 +101,10 @@ public class CryptarithmGame extends JFrame {
         answerInput1.setBounds(270, 12, 300, 42);
         answerInput2.setBounds(270, 12, 300, 42);
         answerInput3.setBounds(270, 12, 300, 42);
+
+        addDecimalValidation(answerInput1);
+        addDecimalValidation(answerInput2);
+        addDecimalValidation(answerInput3);
 
         answerInputPanel1.add(valueFor1);
         answerInputPanel1.add(answerInput1);
@@ -127,7 +134,7 @@ public class CryptarithmGame extends JFrame {
         
         player1ScoreLabel.setHorizontalAlignment(JLabel.CENTER);
         player1ScoreLabel.setVerticalAlignment(JLabel.CENTER);
-        player1ScoreLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        player1ScoreLabel.setFont(new Font("Inter", Font.PLAIN, 20));
         player1ScorePanel.add(player1ScoreLabel);
 
         player2ScorePanel = new JPanel();
@@ -138,7 +145,7 @@ public class CryptarithmGame extends JFrame {
         
         player2ScoreLabel.setHorizontalAlignment(JLabel.CENTER);
         player2ScoreLabel.setVerticalAlignment(JLabel.CENTER);
-        player2ScoreLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        player2ScoreLabel.setFont(new Font("Inter", Font.PLAIN, 20));
         player2ScorePanel.add(player2ScoreLabel);
 
         // END GAME PANEL
@@ -182,6 +189,32 @@ public class CryptarithmGame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleEndGame();
+            }
+        });
+    }
+
+    private void addDecimalValidation(JTextField textField) {
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                validateInput();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                validateInput();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                validateInput();
+            }
+
+            private void validateInput() {
+                String text = textField.getText();
+                if (!Pattern.matches("\\d*\\.?\\d*", text)) {
+                    SwingUtilities.invokeLater(() -> textField.setText(text.replaceAll("[^\\d.]", "")));
+                }
             }
         });
     }

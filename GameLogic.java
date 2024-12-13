@@ -15,10 +15,6 @@ public class GameLogic {
 
     private char[] digitToCharMap = new char[10];
 
-    public GameLogic() {
-        this.digitToCharMap = helperFunc.generateRandomMapping();
-    }
-
     public String getOperator() {
         return (operator ? " + " : " - ");
     }
@@ -44,6 +40,7 @@ public class GameLogic {
         this.answer = Integer.toString(num1) + operator + Integer.toString(num2) + " = " + Integer.toString(num3);
         this.operator = isAddition;
 
+        this.digitToCharMap = helperFunc.generateRandomMapping();
         String encryptedNum1 = helperFunc.encryptNumber(num1, this.digitToCharMap);
         String encryptedNum2 = helperFunc.encryptNumber(num2, this.digitToCharMap);
         String encryptedNum3 = helperFunc.encryptNumber(num3, this.digitToCharMap);
